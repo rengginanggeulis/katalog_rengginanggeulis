@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rengginang Geulis - Camilan Premium Sunda</title>
+  
+  <!-- Google Fonts: Inter and Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Custom Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            sunda: {
+              50: '#FAF7F2',
+              100: '#F3EFE3',
+              200: '#E7DEC4',
+              300: '#D5C49A',
+              400: '#C0A46F',
+              500: '#A9844A',
+              600: '#8E6737',
+              700: '#724D2C',
+              800: '#5A3C25',
+              900: '#3D281B',
+              950: '#23160F',
+            }
+          },
+          animation: {
+            'spin-slow': 'spin 12s linear infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF7F2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #8E6737;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #5A3C25;
+    }
+    .custom-blur-bg {
+      backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="bg-sunda-50 text-gray-800 font-sans antialiased selection:bg-sunda-200 selection:text-sunda-950">
+
+  <!-- Custom Beautiful Alert Box -->
+  <div id="toastNotification" class="fixed top-5 right-5 z-50 max-w-sm transform translate-y-[-150%] transition-transform duration-300 shadow-2xl rounded-2xl overflow-hidden border border-sunda-200 bg-white">
+    <div class="p-4 flex items-center space-x-3">
+      <div id="toastIconContainer" class="p-2 rounded-full bg-emerald-100 text-emerald-600">
+        <i id="toastIcon" class="fas fa-check-circle text-lg"></i>
+      </div>
+      <div>
+        <p id="toastMessage" class="text-sm font-semibold text-gray-900">Notifikasi Sukses</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminStatusBar" class="hidden bg-emerald-800 text-white px-4 py-2 sticky top-0 z-40 shadow-md flex justify-between items-center text-xs md:text-sm font-medium">
+    <div class="flex items-center space-x-2 animate-pulse">
+      <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 inline-block"></span>
+      <span>Status Admin: Aktif (Mode Edit Terbuka)</span>
+    </div>
+    <div class="flex items-center space-x-3">
+      <button onclick="openAdminPanel('banner')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-1 px-3 rounded-full border border-emerald-500 transition duration-200">
+        <i class="fas fa-sliders-h mr-1"></i> Buka Editor Panel
+      </button>
+      <button onclick="logoutAdmin()" class="bg-red-700 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full transition duration-200">
+        <i class="fas fa-sign-out-alt mr-1"></i> Keluar Admin
+      </button>
+    </div>
+  </div>
+
+  <header class="relative bg-sunda-950 text-white overflow-hidden min-h-[580px] flex items-center">
+    <div class="absolute inset-0 z-0">
+      <img id="heroBannerBg" src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?q=80&w=1600&auto=format&fit=crop" alt="Rengginang Geulis Banner" class="w-full h-full object-cover opacity-35 filter blur-[0.5px] transition-transform duration-200">
+      <div class="absolute inset-0 bg-gradient-to-b from-sunda-950/60 via-sunda-950/80 to-sunda-50"></div>
+    </div>
+
+    <div class="container mx-auto px-6 py-16 relative z-10 text-center max-w-4xl">
+      <!-- Profile Picture Badge with overflow mask -->
+      <div class="mx-auto mb-6 relative group inline-block w-24 h-24 md:w-32 md:h-32">
+        <div class="w-full h-full rounded-full overflow-hidden border-4 border-sunda-400 shadow-2xl">
+          <img id="heroLogo" src="https://placehold.co/150x150/8E6737/white?text=Rengginang+Geulis" alt="Logo Rengginang Geulis" class="w-full h-full object-cover transition-all duration-300">
+        </div>
+        <button onclick="openAdminPanel('banner')" class="admin-only hidden absolute -bottom-1 right-1 bg-sunda-500 hover:bg-sunda-400 text-sunda-950 p-2.5 rounded-full text-xs shadow-md transition z-10" title="Ganti Foto Profil">
+          <i class="fas fa-camera"></i>
+        </button>
+      </div>
+
+      <div class="admin-only hidden max-w-xs mx-auto mb-4">
+        <button onclick="openAdminPanel('banner')" class="inline-flex items-center space-x-1.5 bg-sunda-500/95 text-sunda-950 px-3.5 py-1.5 rounded-full text-xs font-bold hover:bg-sunda-400 transition cursor-pointer shadow-md">
+          <i class="fas fa-edit"></i> <span>Edit Banner & Foto</span>
+        </button>
+      </div>
+
+      <div class="inline-block border border-sunda-400/40 bg-sunda-900/40 custom-blur-bg rounded-full px-5 py-1.5 mb-6">
+        <span id="heroTagline" class="text-sunda-300 font-semibold text-xs tracking-widest uppercase">Raos Ngepros Pilihan Keluarga</span>
+      </div>
+
+      <h1 id="heroTitle" class="font-serif text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sunda-200 via-sunda-100 to-sunda-300 drop-shadow mb-4">
+        Rengginang Geulis
+      </h1>
+
+      <p id="heroSubtitle" class="text-xl md:text-2xl font-light text-sunda-100 max-w-2xl mx-auto mb-6 leading-relaxed">
+        Camilan Ketan Asli Hasil Panen Sendiri & Resep Tradisional Nenek Lilis
+      </p>
+
+      <p id="heroDesc" class="text-sm md:text-base text-sunda-200/80 max-w-xl mx-auto leading-relaxed mb-8">
+        Dibuat penuh kasih sayang dari beras ketan pilihan yang ditanam, dipanen, dan diolah secara tradisional di tanah pasundan demi menjamin cita rasa gurih renyah alami.
+      </p>
+
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+        <a href="#katalog" class="w-full sm:w-auto px-8 py-3 bg-sunda-600 hover:bg-sunda-500 text-white rounded-full font-bold shadow-lg shadow-sunda-950/40 transform hover:-translate-y-0.5 transition">
+          Lihat Katalog Produk
+        </a>
+        <a id="heroLinktree" href="#" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full font-bold custom-blur-bg border border-white/20 transition flex items-center justify-center space-x-2">
+          <i class="fas fa-tree text-emerald-400"></i>
+          <span>Linktree Kami</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="py-16 px-6 container mx-auto max-w-5xl">
+    <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl shadow-sunda-950/5 border border-sunda-100 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-sunda-100/30 rounded-full blur-2xl"></div>
+      
+      <div class="grid md:grid-cols-12 gap-8 items-center relative z-10">
+        <div class="md:col-span-4 text-center md:text-left">
+          <span class="text-sunda-700 font-bold uppercase tracking-wider text-xs block mb-2">Citra Rasa Nusantara</span>
+          <h2 id="aboutTitle" class="font-serif text-3xl md:text-4xl font-bold text-sunda-950 leading-tight">
+            Kenapa Memilih Kami?
+          </h2>
+          <div class="w-16 h-1 bg-sunda-500 mx-auto md:mx-0 mt-4 rounded-full"></div>
+        </div>
+        
+        <div class="md:col-span-8">
+          <p id="aboutContent" class="text-gray-600 leading-relaxed md:text-lg text-justify md:text-left">
+            Rengginang Geulis milik Nenek Lilis menggunakan 100% beras ketan premium pilihan yang ditanam dan dipanen langsung dari kebun sendiri. Diolah menggunakan bumbu tradisional lokal tanpa pengawet sintetik, menciptakan tekstur super renyah (ngepros) yang memanjakan lidah serta pelayanan ramah layaknya keluarga sendiri.
+          </p>
+          
+          <button onclick="openAdminPanel('about')" class="admin-only hidden mt-4 inline-flex items-center space-x-1.5 bg-sunda-100 text-sunda-800 px-3 py-1 rounded-full text-xs font-semibold hover:bg-sunda-200 transition">
+            <i class="fas fa-edit"></i> <span>Edit Penjelasan Ini</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="katalog" class="py-16 bg-sunda-100/30 border-t border-b border-sunda-100">
+    <div class="container mx-auto px-6 max-w-6xl">
+      
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-sunda-700 font-bold uppercase tracking-wider text-xs">Varian Terbaik Kami</span>
+        <h2 class="font-serif text-3xl md:text-5xl font-extrabold text-sunda-950 mt-2 mb-4">
+          Pilihan Rasa Istimewa
+        </h2>
+        <p class="text-gray-600 text-sm md:text-base">
+          Setiap bungkus dikemas eksklusif dengan cita rasa khas raos ngepros yang sama mantapnya. Temukan rasa favoritmu hari ini!
+        </p>
+        <button onclick="addNewProduct()" class="admin-only hidden mt-4 inline-flex items-center space-x-2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-500 transition shadow-md shadow-emerald-950/20">
+          <i class="fas fa-plus"></i> <span>Tambah Varian Baru</span>
+        </button>
+      </div>
+
+      <!-- Products Wrapper -->
+      <div id="productsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Products will be injected dynamically via JS -->
+      </div>
+
+    </div>
+  </section>
+
+  <section id="testimoni" class="py-16 bg-white border-b border-sunda-100">
+    <div class="container mx-auto px-6 max-w-5xl">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-sunda-700 font-bold uppercase tracking-wider text-xs block mb-2">Suara Pelanggan</span>
+        <h2 class="font-serif text-3xl md:text-4xl font-bold text-sunda-950">Forum Testimoni & Ulasan</h2>
+        <div class="w-16 h-1 bg-sunda-500 mx-auto mt-4 rounded-full"></div>
+        <p class="text-gray-600 text-sm mt-4">
+          Kepuasan Anda adalah prioritas kami. Tulis ulasan atau pengalaman Anda menikmati kelezatan Rengginang Geulis di bawah ini!
+        </p>
+      </div>
+
+      <!-- Testimonial Layout: Form + Reviews List -->
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Testimonial Form Card -->
+        <div class="lg:col-span-4 bg-sunda-50 p-6 rounded-3xl border border-sunda-200 shadow-sm sticky top-24">
+          <h3 id="formTestiTitle" class="font-serif text-lg font-bold text-sunda-950 mb-4 flex items-center gap-2">
+            <i class="fas fa-pen-nib text-sunda-600"></i> Tulis Ulasan Baru
+          </h3>
+          
+          <form id="testimonialForm" onsubmit="handleTestimonialSubmit(event)" class="space-y-4">
+            <input type="hidden" id="editTestiId" value="">
+            
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Nama Lengkap</label>
+              <input id="testiName" type="text" placeholder="Contoh: Teh Imas" class="w-full px-3 py-2.5 rounded-xl border border-sunda-200 bg-white focus:outline-none focus:ring-2 focus:ring-sunda-500 text-sm" required>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Penilaian (Rating)</label>
+              <div class="flex items-center space-x-1.5 py-1">
+                <input type="hidden" id="testiRating" value="5">
+                <button type="button" onclick="setStarRating(1)" class="star-btn text-2xl text-amber-400 focus:outline-none"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="setStarRating(2)" class="star-btn text-2xl text-amber-400 focus:outline-none"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="setStarRating(3)" class="star-btn text-2xl text-amber-400 focus:outline-none"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="setStarRating(4)" class="star-btn text-2xl text-amber-400 focus:outline-none"><i class="fas fa-star"></i></button>
+                <button type="button" onclick="setStarRating(5)" class="star-btn text-2xl text-amber-400 focus:outline-none"><i class="fas fa-star"></i></button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Isi Ulasan / Testimoni</label>
+              <textarea id="testiMessage" rows="4" placeholder="Bagikan kesan renyah & gurihnya..." class="w-full px-3 py-2.5 rounded-xl border border-sunda-200 bg-white focus:outline-none focus:ring-2 focus:ring-sunda-500 text-sm" required></textarea>
+            </div>
+
+            <div class="flex gap-2">
+              <button id="btnCancelEditTesti" type="button" onclick="resetTestimonialForm()" class="hidden w-1/3 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs transition">
+                Batal
+              </button>
+              <button type="submit" id="btnSubmitTesti" class="flex-grow py-2.5 bg-sunda-800 hover:bg-sunda-700 text-white font-bold rounded-xl text-xs transition shadow-md shadow-sunda-900/15">
+                <i class="fas fa-paper-plane mr-1"></i> Kirim Ulasan
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Testimonial Lists -->
+        <div class="lg:col-span-8 space-y-4">
+          <div class="flex justify-between items-center px-2">
+            <h3 class="font-serif text-lg font-bold text-sunda-950 flex items-center gap-2">
+              <i class="fas fa-comments text-sunda-600"></i> Cerita Gurih Mereka
+            </h3>
+            <span id="testiCount" class="bg-sunda-200 text-sunda-900 text-xs font-bold px-3 py-1 rounded-full">0 Ulasan</span>
+          </div>
+
+          <div id="testimonialsList" class="space-y-4">
+            <!-- Testimonials card injected dynamically via JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-sunda-50">
+    <div class="container mx-auto px-6 max-w-4xl text-center">
+      <div class="inline-block bg-sunda-100 text-sunda-900 font-extrabold px-6 py-2 rounded-full text-sm mb-6 shadow-sm">
+        <i class="fas fa-handshake mr-1.5"></i> Hubungi & Ikuti Kami
+      </div>
+
+      <h2 class="font-serif text-3xl md:text-4xl font-bold text-sunda-950 mb-8">
+        Pesan Cepat & Lokasi Kami
+      </h2>
+
+      <!-- Address Box with Google Maps Redirect -->
+      <div class="bg-white rounded-3xl p-6 border border-sunda-100 shadow-sm max-w-3xl mx-auto mb-8 text-left flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-sunda-50/60 rounded-full blur-xl"></div>
+        <div class="p-4 bg-sunda-100/50 text-sunda-900 rounded-2xl flex-shrink-0 border border-sunda-100">
+          <i class="fas fa-map-marked-alt text-2xl text-sunda-700"></i>
+        </div>
+        <div class="flex-grow z-10">
+          <span class="text-xs font-bold text-sunda-800 uppercase tracking-widest block mb-1">Alamat Rumah Produksi</span>
+          <p id="displayAddress" class="text-gray-700 text-sm md:text-base leading-relaxed font-medium">
+            Nagreg, Bandung, Jawa Barat, Indonesia
+          </p>
+        </div>
+        <div class="flex-shrink-0 w-full md:w-auto z-10">
+          <a id="btnGoogleMaps" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto inline-flex justify-center items-center gap-2 bg-sunda-800 hover:bg-sunda-700 text-white font-bold text-xs py-3 px-5 rounded-2xl transition shadow-md shadow-sunda-950/20">
+            <i class="fas fa-map-marker-alt text-rose-500 animate-pulse"></i>
+            <span>Lihat di Maps</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Social Media Grid -->
+      <div id="socialsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-10">
+        <!-- WhatsApp -->
+        <a id="socialWA" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 bg-white hover:bg-emerald-50 rounded-2xl border border-sunda-100 shadow-sm transition hover:scale-[1.02] text-left">
+          <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
+            <i class="fab fa-whatsapp text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block">WhatsApp</span>
+            <span id="txtWA" class="text-sm font-semibold text-gray-800">0851-XXXX-XXXX</span>
+          </div>
+        </a>
+
+        <!-- Instagram -->
+        <a id="socialIG" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 bg-white hover:bg-pink-50 rounded-2xl border border-sunda-100 shadow-sm transition hover:scale-[1.02] text-left">
+          <div class="p-3 bg-pink-100 text-pink-600 rounded-xl">
+            <i class="fab fa-instagram text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block">Instagram</span>
+            <span id="txtIG" class="text-sm font-semibold text-gray-800">@rengginanggeulis</span>
+          </div>
+        </a>
+
+        <!-- TikTok -->
+        <a id="socialTikTok" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 bg-white hover:bg-stone-50 rounded-2xl border border-sunda-100 shadow-sm transition hover:scale-[1.02] text-left">
+          <div class="p-3 bg-stone-100 text-stone-950 rounded-xl">
+            <i class="fab fa-tiktok text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block">TikTok</span>
+            <span id="txtTikTok" class="text-sm font-semibold text-gray-800">@rengginanggeulis</span>
+          </div>
+        </a>
+
+        <!-- Facebook -->
+        <a id="socialFB" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 bg-white hover:bg-blue-50 rounded-2xl border border-sunda-100 shadow-sm transition hover:scale-[1.02] text-left">
+          <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+            <i class="fab fa-facebook text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block">Facebook</span>
+            <span id="txtFB" class="text-sm font-semibold text-gray-800">Rengginang Geulis</span>
+          </div>
+        </a>
+
+        <!-- Twitter / X -->
+        <a id="socialTwitter" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 bg-white hover:bg-sky-50 rounded-2xl border border-sunda-100 shadow-sm transition hover:scale-[1.02] text-left">
+          <div class="p-3 bg-sky-100 text-sky-500 rounded-xl">
+            <i class="fab fa-twitter text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block">Twitter / X</span>
+            <span id="txtTwitter" class="text-sm font-semibold text-gray-800">@geulis_rengginang</span>
+          </div>
+        </a>
+
+        <!-- Linktree -->
+        <a id="socialLinktree" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 bg-white hover:bg-emerald-50 rounded-2xl border border-sunda-100 shadow-sm transition hover:scale-[1.02] text-left">
+          <div class="p-3 bg-emerald-50 text-emerald-700 rounded-xl">
+            <i class="fas fa-tree text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block">Linktree</span>
+            <span class="text-sm font-semibold text-gray-800">Buka Linktree</span>
+          </div>
+        </a>
+      </div>
+
+      <button onclick="openAdminPanel('socials')" class="admin-only hidden inline-flex items-center space-x-1.5 bg-sunda-100 text-sunda-800 px-4 py-1.5 rounded-full text-xs font-semibold hover:bg-sunda-200 transition">
+        <i class="fas fa-edit"></i> <span>Edit Kontak, Sosmed & Alamat</span>
+      </button>
+    </div>
+  </section>
+
+  <footer class="bg-sunda-950 text-sunda-200/60 text-center py-10 px-6 border-t border-sunda-900/40 text-sm">
+    <p class="font-serif text-lg font-bold text-sunda-100 mb-2">Rengginang Geulis</p>
+    <p id="footerAddress" class="text-xs text-sunda-200/50 max-w-md mx-auto mb-4">
+      Nagreg, Bandung, Jawa Barat, Indonesia
+    </p>
+    <p class="mb-4 text-xs">Camilan Premium Gurih & Crispy © <span id="currentYear"></span>. All Rights Reserved.</p>
+    <p class="text-[10px] text-sunda-300/40">Seni camilan Sunda dengan sentuhan rasa istimewa dari Jawa Barat.</p>
+  </footer>
+
+  <div class="fixed bottom-6 right-6 z-50">
+    <button id="adminTriggerBtn" onclick="toggleAdminView()" class="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition transform active:scale-95 duration-200 hover:scale-110 bg-sunda-850 hover:bg-sunda-700 text-white" title="Akses Admin">
+      <i id="adminTriggerIcon" class="fas fa-lock text-2xl"></i>
+    </button>
+  </div>
+
+  <div id="loginModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-sunda-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl border border-sunda-100">
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-lock text-sunda-800 text-xl"></i>
+          <h3 class="font-serif text-xl font-bold text-sunda-950">Akses Admin</h3>
+        </div>
+        <button onclick="closeLoginModal()" class="text-gray-400 hover:text-gray-600 transition">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+
+      <p class="text-sm text-gray-600 mb-6">
+        Masukkan password admin untuk mengaktifkan fitur pengeditan langsung katalog Rengginang Geulis.
+      </p>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Password</label>
+          <div class="relative">
+            <input id="adminPassword" type="password" placeholder="Masukkan sandi..." class="w-full px-4 py-3 rounded-2xl bg-sunda-50/50 border border-sunda-100 focus:outline-none focus:ring-2 focus:ring-sunda-500 text-gray-800" required>
+            <span class="absolute right-4 top-3.5 text-sunda-800/40">
+              <i class="fas fa-key"></i>
+            </span>
+          </div>
+          <p id="loginError" class="hidden text-xs text-rose-500 mt-2 font-medium flex items-center">
+            <i class="fas fa-exclamation-triangle mr-1"></i> Sandi salah, silakan coba lagi!
+          </p>
+        </div>
+
+        <div class="flex space-x-3 pt-2">
+          <button type="button" onclick="closeLoginModal()" class="w-1/2 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl text-sm transition">
+            Batal
+          </button>
+          <button type="submit" class="w-1/2 py-3 bg-sunda-800 hover:bg-sunda-700 text-white font-bold rounded-2xl text-sm transition shadow-md shadow-sunda-900/10">
+            Buka Gembok
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminPanel" class="hidden fixed inset-0 z-50 bg-sunda-950/80 backdrop-blur-md flex justify-end">
+    <div class="bg-white w-full max-w-2xl h-full shadow-2xl overflow-y-auto flex flex-col border-l border-sunda-200">
+      
+      <!-- Panel Header -->
+      <div class="p-6 border-b border-sunda-100 bg-sunda-900 text-white flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <i class="fas fa-cog text-xl animate-spin-slow"></i>
+          <div>
+            <h3 class="font-serif text-xl font-bold">Admin Control Panel</h3>
+            <p class="text-[10px] text-sunda-200 uppercase tracking-widest">Rengginang Geulis Website Editor</p>
+          </div>
+        </div>
+        <button onclick="closeAdminPanel()" class="p-2 bg-sunda-800 text-white rounded-full hover:bg-sunda-700 transition">
+          <i class="fas fa-times text-md"></i>
+        </button>
+      </div>
+
+      <!-- Main Editor Container (Two-column layout on Desktop) -->
+      <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- Tab Sidebar -->
+        <div class="bg-sunda-50/50 w-full md:w-52 border-b md:border-b-0 md:border-r border-sunda-100 p-4 space-y-2 flex-shrink-0 overflow-y-auto">
+          <p class="text-[10px] text-gray-400 font-extrabold uppercase tracking-wide mb-3 pl-2">Kategori Edit</p>
+          
+          <button onclick="switchTab('banner')" id="tab-banner" class="editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition">
+            <i class="fas fa-image w-4"></i> <span>Banner & Foto</span>
+          </button>
+
+          <button onclick="switchTab('about')" id="tab-about" class="editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition">
+            <i class="fas fa-info-circle w-4"></i> <span>Tentang Kami</span>
+          </button>
+
+          <button onclick="switchTab('socials')" id="tab-socials" class="editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition">
+            <i class="fas fa-share-alt w-4"></i> <span>Sosmed & Alamat</span>
+          </button>
+
+          <button onclick="switchTab('testimonials-admin')" id="tab-testimonials-admin" class="editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition">
+            <i class="fas fa-comments w-4"></i> <span>Moderasian Testimoni</span>
+          </button>
+
+          <button onclick="switchTab('export')" id="tab-export" class="editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition text-emerald-800 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100">
+            <i class="fas fa-cloud-download-alt w-4"></i> <span>Ekspor Website</span>
+          </button>
+
+          <div class="border-t border-sunda-100 my-4 pt-4">
+            <p class="text-[10px] text-gray-400 font-extrabold uppercase tracking-wide mb-3 pl-2">Varian Produk</p>
+            <div id="productTabsContainer" class="space-y-1">
+              <!-- Dynamically populated product list -->
+            </div>
+            <button onclick="addNewProduct()" class="w-full text-center mt-3 py-2 px-3 border border-dashed border-emerald-400 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1">
+              <i class="fas fa-plus"></i> <span>Tambah Varian</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor Viewport Form -->
+        <div class="flex-grow p-6 bg-white overflow-y-auto h-full">
+          
+          <!-- TAB 1: HERO & PHOTO -->
+          <div id="form-banner" class="editor-form hidden space-y-4">
+            <h4 class="font-serif text-lg font-bold text-sunda-950 border-b pb-2">Banner & Foto Profil</h4>
+            
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Foto Profil Usaha (URL Gambar)</label>
+              <input id="editLogoUrl" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="URL Gambar...">
+              
+              <!-- Drag & Drop Zone for Logo Upload -->
+              <div class="mt-2 border-2 border-dashed border-sunda-300 hover:border-sunda-500 rounded-2xl p-4 text-center cursor-pointer hover:bg-sunda-50 transition relative group" id="drop-zone-logo">
+                <input type="file" id="file-logo" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <div class="space-y-1 pointer-events-none">
+                  <i class="fas fa-camera text-2xl text-sunda-600 group-hover:scale-110 transition duration-200"></i>
+                  <p class="text-xs font-semibold text-gray-700">Tarik & taruh foto profil, atau klik untuk memilih</p>
+                  <p class="text-[10px] text-gray-400">Mendukung format JPG, PNG, WEBP (Maksimal 5MB)</p>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between">
+                  <span>Pengaturan Zoom Foto Profil</span>
+                  <span id="logoScaleValue" class="text-sunda-600 font-bold">1.00x</span>
+                </label>
+                <input id="editLogoScale" type="range" min="0.5" max="3" step="0.05" class="w-full accent-sunda-600">
+              </div>
+
+              <div class="mt-2 flex items-center space-x-3 bg-sunda-50 p-2.5 rounded-xl border border-sunda-100">
+                <div class="w-12 h-12 rounded-full overflow-hidden border shadow flex-shrink-0">
+                  <img id="editLogoPreview" src="" alt="Pratinjau Profil" class="w-full h-full object-cover transition-transform duration-200" onerror="this.src='https://placehold.co/100x100'">
+                </div>
+                <p class="text-[10px] text-gray-400">Pratinjau Foto Profil Usaha. Masukkan tautan URL gambar, unggah file, atau geser ukuran zoom di atas.</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Judul Utama</label>
+              <input id="editHeroTitle" type="text" class="w-full px-3 py-2 border rounded-xl text-sm">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Sub-Judul</label>
+              <input id="editHeroSubtitle" type="text" class="w-full px-3 py-2 border rounded-xl text-sm">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Tagline Promosi</label>
+              <input id="editHeroTagline" type="text" class="w-full px-3 py-2 border rounded-xl text-sm">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Latar Belakang Gambar Banner (URL)</label>
+              <input id="editHeroBg" type="text" class="w-full px-3 py-2 border rounded-xl text-sm">
+              
+              <!-- Drag & Drop Zone for Banner Background Upload -->
+              <div class="mt-2 border-2 border-dashed border-sunda-300 hover:border-sunda-500 rounded-2xl p-4 text-center cursor-pointer hover:bg-sunda-50 transition relative group" id="drop-zone-banner">
+                <input type="file" id="file-banner" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <div class="space-y-1 pointer-events-none">
+                  <i class="fas fa-image text-2xl text-sunda-600 group-hover:scale-110 transition duration-200"></i>
+                  <p class="text-xs font-semibold text-gray-700">Tarik & taruh gambar latar, atau klik untuk memilih</p>
+                  <p class="text-[10px] text-gray-400">Gunakan foto landscape berkualitas tinggi agar banner terlihat memikat</p>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between">
+                  <span>Pengaturan Zoom Gambar Banner</span>
+                  <span id="bannerScaleValue" class="text-sunda-600 font-bold">1.05x</span>
+                </label>
+                <input id="editHeroScale" type="range" min="0.5" max="3" step="0.05" class="w-full accent-sunda-600">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Teks Deskripsi Banner</label>
+              <textarea id="editHeroDesc" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm"></textarea>
+            </div>
+
+            <button onclick="saveHeroChanges()" class="w-full py-2.5 bg-sunda-800 hover:bg-sunda-700 text-white font-bold rounded-xl text-xs transition">
+              <i class="fas fa-save mr-1"></i> Simpan Perubahan Banner & Foto
+            </button>
+          </div>
+
+          <!-- TAB 2: ABOUT US -->
+          <div id="form-about" class="editor-form hidden space-y-4">
+            <h4 class="font-serif text-lg font-bold text-sunda-950 border-b pb-2">Tentang Kami</h4>
+            
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Judul Bagian</label>
+              <input id="editAboutTitle" type="text" class="w-full px-3 py-2 border rounded-xl text-sm">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Konten Penjelasan</label>
+              <textarea id="editAboutContent" rows="8" class="w-full px-3 py-2 border rounded-xl text-sm leading-relaxed"></textarea>
+            </div>
+
+            <button onclick="saveAboutChanges()" class="w-full py-2.5 bg-sunda-800 hover:bg-sunda-700 text-white font-bold rounded-xl text-xs transition">
+              <i class="fas fa-save mr-1"></i> Simpan Perubahan 'Tentang Kami'
+            </button>
+          </div>
+
+          <!-- TAB 3: CONTACT & SOCIALS -->
+          <div id="form-socials" class="editor-form hidden space-y-4">
+            <h4 class="font-serif text-lg font-bold text-sunda-950 border-b pb-2">Kontak, Sosmed & Alamat</h4>
+            
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Alamat Rumah Produksi</label>
+              <textarea id="editAddress" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">No WhatsApp Toko</label>
+              <input id="editSocialWA" type="text" class="w-full px-3 py-2 border rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50/25" placeholder="Contoh: 085194295016">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Username Instagram (Tanpa @)</label>
+              <input id="editSocialIG" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="Contoh: rengginang.geulis">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Username TikTok (Tanpa @)</label>
+              <input id="editSocialTikTok" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="Contoh: rengginang_geulis">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Nama / Link Halaman Facebook</label>
+              <input id="editSocialFB" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="Contoh: Rengginang Geulis Official">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Username Twitter / X (Tanpa @)</label>
+              <input id="editSocialTwitter" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="Contoh: geulis_rengginang">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">URL Linktree Lengkap</label>
+              <input id="editSocialLinktree" type="url" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="https://linktr.ee/rengginanggeulis">
+            </div>
+
+            <button onclick="saveSocialChanges()" class="w-full py-2.5 bg-sunda-800 hover:bg-sunda-700 text-white font-bold rounded-xl text-xs transition">
+              <i class="fas fa-save mr-1"></i> Simpan Perubahan Kontak & Sosmed
+            </button>
+          </div>
+
+          <!-- TAB 4: TESTIMONIALS MODERATION (ADMIN ONLY) -->
+          <div id="form-testimonials-admin" class="editor-form hidden space-y-4">
+            <h4 class="font-serif text-lg font-bold text-sunda-950 border-b pb-2">Moderasian Testimoni</h4>
+            <p class="text-xs text-gray-500">Sebagai administrator, Anda dapat menghapus atau menyunting testimoni apa pun untuk memastikan forum ulasan tetap sehat dan beretika.</p>
+            
+            <div id="adminTestimonialsList" class="space-y-2 max-h-[400px] overflow-y-auto border p-2 rounded-2xl bg-gray-50">
+              <!-- Dynamically populated inside JS -->
+            </div>
+          </div>
+
+          <!-- TAB 5: WEB DEPLOYMENT / EXPORT -->
+          <div id="form-export" class="editor-form hidden space-y-6">
+            <h4 class="font-serif text-lg font-bold text-emerald-950 border-b pb-2">Ekspor Website Mandiri</h4>
+            
+            <p class="text-xs text-gray-600 leading-relaxed">
+              Katalog ini dirancang sebagai website mandiri. Anda telah melakukan pengeditan data secara lokal. Agar perubahan tersimpan secara permanen di file yang siap Anda pasang online di internet, klik tombol di bawah ini untuk mengunduh versi file website terbaru yang telah diperbarui datanya.
+            </p>
+
+            <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+              <h5 class="text-xs font-bold text-amber-900 uppercase tracking-wider mb-2"><i class="fas fa-lightbulb mr-1"></i> Cara Menayangkan Website Ini secara GRATIS:</h5>
+              <ol class="text-xs text-amber-950 list-decimal pl-4 space-y-1.5">
+                <li>Klik tombol <strong>"Unduh File Website (index.html)"</strong> di bawah ini.</li>
+                <li>Buka platform hosting gratis tanpa coding seperti <a href="https://app.netlify.com/drop" target="_blank" class="underline font-bold text-sunda-800">Netlify Drop</a> atau <a href="https://tiny.host/" target="_blank" class="underline font-bold text-sunda-800">TinyHost</a>.</li>
+                <li>Tarik & taruh (drag and drop) file <code>index.html</code> yang baru diunduh ke layar browser platform tersebut.</li>
+                <li>Website Anda langsung online dan siap disebarkan di bio Instagram, TikTok, dan Linktree Anda!</li>
+              </ol>
+            </div>
+
+            <button onclick="downloadWebsiteFile()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl text-sm transition shadow-lg shadow-emerald-800/10 flex items-center justify-center space-x-2">
+              <i class="fas fa-download"></i> <span>Unduh File Website (index.html)</span>
+            </button>
+          </div>
+
+          <!-- DYNAMIC PRODUCT EDIT FORM (Container) -->
+          <div id="dynamicProductFormContainer" class="hidden space-y-4">
+            <!-- Programmatically Injected Form -->
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT CORE LOGIC -->
+  <script>
+    // --- DATABASE & DEFAULTS ---
+    let appData = {
+      isAdmin: false,
+      hero: {
+        title: "Rengginang Geulis",
+        subtitle: "Camilan Ketan Asli Hasil Panen Sendiri & Resep Tradisional Nenek Lilis",
+        tagline: "Raos Ngepros Pilihan Keluarga",
+        desc: "Dibuat penuh kasih sayang dari beras ketan pilihan yang ditanam, dipanen, dan diolah secara tradisional di tanah pasundan demi menjamin cita rasa gurih renyah alami.",
+        logoUrl: "https://placehold.co/150x150/8E6737/white?text=Rengginang+Geulis",
+        logoScale: 1.0,
+        bgUrl: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?q=80&w=1600&auto=format&fit=crop",
+        bgScale: 1.05
+      },
+      about: {
+        title: "Kenapa Memilih Kami?",
+        content: "Rengginang Geulis milik Nenek Lilis menggunakan 100% beras ketan premium pilihan yang ditanam dan dipanen langsung dari kebun sendiri. Diolah menggunakan bumbu tradisional lokal tanpa pengawet sintetik, menciptakan tekstur super renyah (ngepros) yang memanjakan lidah serta pelayanan ramah layaknya keluarga sendiri."
+      },
+      socials: {
+        address: "Nagreg, Bandung, Jawa Barat, Indonesia",
+        wa: "085194295016",
+        ig: "rengginang.geulis",
+        tiktok: "rengginang_geulis",
+        fb: "Rengginang Geulis",
+        twitter: "geulis_rengginang",
+        linktree: "https://linktr.ee/rengginanggeulis"
+      },
+      products: [
+        {
+          id: "p1",
+          name: "Rengginang Original Ketan Putih",
+          desc: "Cita rasa otentik bumbu warisan Nenek Lilis. Sangat gurih, renyah, dan diproses alami penjemuran matahari.",
+          price: "Rp 25.000 / bks",
+          imageUrl: "https://placehold.co/400x300/F3EFE3/8E6737?text=Original+Ketan+Putih"
+        },
+        {
+          id: "p2",
+          name: "Rengginang Terasi Gurih",
+          desc: "Kombinasi harum terasi pilihan khas Jawa Barat yang matang menyatu dalam setiap gigitan renyah.",
+          price: "Rp 27.500 / bks",
+          imageUrl: "https://placehold.co/400x300/F3EFE3/8E6737?text=Terasi+Gurih"
+        },
+        {
+          id: "p3",
+          name: "Rengginang Ketan Hitam Premium",
+          desc: "Dibuat dari ketan hitam murni beraroma wangi unik dengan rasa gurih asin khas pedesaan.",
+          price: "Rp 30.000 / bks",
+          imageUrl: "https://placehold.co/400x300/F3EFE3/8E6737?text=Ketan+Hitam+Premium"
+        }
+      ],
+      // Baked-in Default Testimonials (Can be updated & downloaded permanently)
+      testimonials: [
+        {
+          id: "t1",
+          name: "Teh Lilis (Nagreg)",
+          rating: 5,
+          message: "Masya Allah, rengginangna renyah pisan (ngepros)! Rasa terasina mantap, langsung janten langganan kulawarga di bumi.",
+          date: "12 Mei 2026"
+        },
+        {
+          id: "t2",
+          name: "Kang Asep (Bandung)",
+          rating: 5,
+          message: "Pelayanan Nenek Lilis luar biasa bageur tur ramah. Kiriman gancang, rengginang dugi ka bumi aman teu aya nu remuk.",
+          date: "25 Mei 2026"
+        },
+        {
+          id: "t3",
+          name: "Neng Sarah (Jakarta)",
+          rating: 5,
+          message: "Beras ketannya berasa banget bedanya dari rengginang pasar, gurih alaminya pas sekali. Sukses terus Rengginang Geulis!",
+          date: "30 Mei 2026"
+        }
+      ]
+    };
+
+    // --- STREAMING_CHUNK: Initialization and localStorage persistence ---
+    // Load persisted state from localStorage if available, otherwise initialize with default appData
+    function initDatabase() {
+      const stored = localStorage.getItem("rengginang_geulis_db");
+      if (stored) {
+        try {
+          appData = JSON.parse(stored);
+        } catch (e) {
+          console.error("Gagal memuat database lokal, memakai setelan standar.", e);
+        }
+      } else {
+        localStorage.setItem("rengginang_geulis_db", JSON.stringify(appData));
+      }
+      
+      // Load Testimonials specifically
+      const storedTestis = localStorage.getItem("rengginang_geulis_testimonials");
+      if (storedTestis) {
+        try {
+          appData.testimonials = JSON.parse(storedTestis);
+        } catch (e) {
+          console.error("Gagal memuat ulasan pelanggan lokal.", e);
+        }
+      } else {
+        localStorage.setItem("rengginang_geulis_testimonials", JSON.stringify(appData.testimonials));
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem("rengginang_geulis_db", JSON.stringify(appData));
+      localStorage.setItem("rengginang_geulis_testimonials", JSON.stringify(appData.testimonials));
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderPage() {
+      // Hero / Header
+      document.getElementById("heroTitle").innerText = appData.hero.title;
+      document.getElementById("heroSubtitle").innerText = appData.hero.subtitle;
+      document.getElementById("heroTagline").innerText = appData.hero.tagline;
+      document.getElementById("heroDesc").innerText = appData.hero.desc;
+      
+      const logoEl = document.getElementById("heroLogo");
+      logoEl.src = appData.hero.logoUrl;
+      logoEl.style.transform = `scale(${appData.hero.logoScale})`;
+
+      const bgEl = document.getElementById("heroBannerBg");
+      bgEl.src = appData.hero.bgUrl;
+      bgEl.style.transform = `scale(${appData.hero.bgScale})`;
+
+      document.getElementById("heroLinktree").href = appData.socials.linktree;
+
+      // About
+      document.getElementById("aboutTitle").innerText = appData.about.title;
+      document.getElementById("aboutContent").innerText = appData.about.content;
+
+      // Products Catalog Grid
+      const grid = document.getElementById("productsGrid");
+      grid.innerHTML = "";
+      appData.products.forEach(p => {
+        grid.innerHTML += `
+          <div class="bg-white rounded-3xl overflow-hidden border border-sunda-100 shadow-lg shadow-sunda-950/5 group hover:shadow-xl transition flex flex-col h-full relative">
+            <div class="h-56 overflow-hidden relative bg-sunda-50">
+              <img src="${p.imageUrl}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/400x300/F3EFE3/8E6737?text=Foto+Menyusul'">
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="font-serif text-xl font-bold text-sunda-950 mb-2">${p.name}</h3>
+              <p class="text-gray-500 text-xs leading-relaxed flex-grow mb-4">${p.desc}</p>
+              <div class="flex items-center justify-between pt-4 border-t border-sunda-50">
+                <span class="text-sunda-800 font-extrabold text-sm md:text-base">${p.price}</span>
+                <a href="https://wa.me/${appData.socials.wa}?text=Halo%20Nenek%20Lilis,%20saya%20tertarik%20pesan%20${encodeURIComponent(p.name)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 px-4 py-2 bg-sunda-800 hover:bg-sunda-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                  <i class="fab fa-whatsapp"></i> <span>Pesan</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Quick Edit/Delete Trigger (Admin Only) -->
+            <div class="admin-only ${appData.isAdmin ? '' : 'hidden'} absolute top-3 right-3 flex space-x-1.5 z-10">
+              <button onclick="openProductEdit('${p.id}')" class="bg-white hover:bg-sunda-100 text-sunda-900 p-2 rounded-full shadow-md text-xs transition" title="Edit Produk">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="deleteProduct('${p.id}')" class="bg-red-600 hover:bg-red-500 text-white p-2 rounded-full shadow-md text-xs transition" title="Hapus Produk">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      // Contacts & Address
+      document.getElementById("displayAddress").innerText = appData.socials.address;
+      document.getElementById("footerAddress").innerText = appData.socials.address;
+      document.getElementById("btnGoogleMaps").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(appData.socials.address)}`;
+
+      document.getElementById("socialWA").href = `https://wa.me/${appData.socials.wa}`;
+      document.getElementById("txtWA").innerText = formatWA(appData.socials.wa);
+
+      document.getElementById("socialIG").href = `https://instagram.com/${appData.socials.ig}`;
+      document.getElementById("txtIG").innerText = `@${appData.socials.ig}`;
+
+      document.getElementById("socialTikTok").href = `https://tiktok.com/@${appData.socials.tiktok}`;
+      document.getElementById("txtTikTok").innerText = `@${appData.socials.tiktok}`;
+
+      document.getElementById("socialFB").href = appData.socials.fb.startsWith('http') ? appData.socials.fb : `https://facebook.com/${encodeURIComponent(appData.socials.fb)}`;
+      document.getElementById("txtFB").innerText = appData.socials.fb;
+
+      document.getElementById("socialTwitter").href = `https://twitter.com/${appData.socials.twitter}`;
+      document.getElementById("txtTwitter").innerText = `@${appData.socials.twitter}`;
+
+      document.getElementById("socialLinktree").href = appData.socials.linktree;
+
+      // Testimonials List Rendering
+      renderTestimonials();
+
+      // Update admin elements visibility
+      updateAdminElementsVisibility();
+    }
+
+    function formatWA(num) {
+      if(!num) return "-";
+      return num.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3');
+    }
+
+    // --- STREAMING_CHUNK: Managing Testimonial Forum system ---
+    // --- TESTIMONIAL SYSTEM LOGIC ---
+    let activeStarRating = 5;
+
+    function setStarRating(rating) {
+      activeStarRating = rating;
+      document.getElementById("testiRating").value = rating;
+      const stars = document.querySelectorAll(".star-btn");
+      stars.forEach((btn, index) => {
+        if (index < rating) {
+          btn.innerHTML = `<i class="fas fa-star text-amber-400"></i>`;
+        } else {
+          btn.innerHTML = `<i class="far fa-star text-gray-300"></i>`;
+        }
+      });
+    }
+
+    function resetTestimonialForm() {
+      document.getElementById("editTestiId").value = "";
+      document.getElementById("testiName").value = "";
+      document.getElementById("testiMessage").value = "";
+      setStarRating(5);
+      
+      document.getElementById("formTestiTitle").innerHTML = `<i class="fas fa-pen-nib text-sunda-600"></i> Tulis Ulasan Baru`;
+      document.getElementById("btnSubmitTesti").innerHTML = `<i class="fas fa-paper-plane mr-1"></i> Kirim Ulasan`;
+      document.getElementById("btnCancelEditTesti").classList.add("hidden");
+    }
+
+    function handleTestimonialSubmit(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById("editTestiId").value;
+      const name = document.getElementById("testiName").value.trim();
+      const rating = parseInt(document.getElementById("testiRating").value);
+      const message = document.getElementById("testiMessage").value.trim();
+      const today = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateString = today.toLocaleDateString('id-ID', options);
+
+      if(!name || !message) return;
+
+      if (id) {
+        // Edit existing testimonial
+        const idx = appData.testimonials.findIndex(t => t.id === id);
+        if (idx !== -1) {
+          appData.testimonials[idx].name = name;
+          appData.testimonials[idx].rating = rating;
+          appData.testimonials[idx].message = message;
+          showToast("Ulasan Anda berhasil diubah!");
+        }
+      } else {
+        // Create new testimonial
+        const newTesti = {
+          id: 't-' + Date.now(),
+          name: name,
+          rating: rating,
+          message: message,
+          date: dateString
+        };
+        appData.testimonials.unshift(newTesti);
+        showToast("Terima kasih atas ulasan Anda!");
+      }
+
+      saveToLocalStorage();
+      resetTestimonialForm();
+      renderTestimonials();
+      
+      // Update the admin moderation list if panel is open
+      populateAdminTestimonials();
+    }
+
+    function editTestimonial(id) {
+      const testi = appData.testimonials.find(t => t.id === id);
+      if (testi) {
+        document.getElementById("editTestiId").value = testi.id;
+        document.getElementById("testiName").value = testi.name;
+        document.getElementById("testiMessage").value = testi.message;
+        setStarRating(testi.rating);
+
+        document.getElementById("formTestiTitle").innerHTML = `<i class="fas fa-edit text-sunda-600"></i> Ubah Ulasan Anda`;
+        document.getElementById("btnSubmitTesti").innerHTML = `<i class="fas fa-save mr-1"></i> Simpan Perubahan`;
+        document.getElementById("btnCancelEditTesti").classList.remove("hidden");
+        
+        // Scroll smoothly to form
+        document.getElementById("testimoni").scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function deleteTestimonial(id) {
+      if (confirm("Apakah Anda yakin ingin menghapus ulasan ini?")) {
+        appData.testimonials = appData.testimonials.filter(t => t.id !== id);
+        saveToLocalStorage();
+        renderTestimonials();
+        populateAdminTestimonials();
+        showToast("Ulasan berhasil dihapus.");
+      }
+    }
+
+    function renderTestimonials() {
+      const container = document.getElementById("testimonialsList");
+      container.innerHTML = "";
+      
+      document.getElementById("testiCount").innerText = `${appData.testimonials.length} Ulasan`;
+
+      if (appData.testimonials.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 bg-white border border-dashed rounded-3xl p-6">
+            <i class="far fa-comments text-4xl text-gray-300 mb-2"></i>
+            <p class="text-gray-500 text-sm">Belum ada ulasan. Jadilah yang pertama memberikan ulasan hangat!</p>
+          </div>
+        `;
+        return;
+      }
+
+      appData.testimonials.forEach(t => {
+        let starsHtml = "";
+        for (let i = 1; i <= 5; i++) {
+          starsHtml += i <= t.rating 
+            ? `<i class="fas fa-star text-amber-400 text-xs"></i>` 
+            : `<i class="far fa-star text-gray-300 text-xs"></i>`;
+        }
+
+        container.innerHTML += `
+          <div class="bg-sunda-50/40 p-6 rounded-3xl border border-sunda-100 shadow-sm hover:border-sunda-200 hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h4 class="font-bold text-gray-900 text-sm md:text-base">${t.name}</h4>
+                <div class="flex items-center space-x-1.5 mt-0.5">
+                  <div class="flex">${starsHtml}</div>
+                  <span class="text-[10px] text-gray-400">• ${t.date}</span>
+                </div>
+              </div>
+              <div class="flex space-x-1">
+                <button onclick="editTestimonial('${t.id}')" class="text-gray-400 hover:text-sunda-800 p-1.5 rounded-lg text-xs transition" title="Edit Ulasan Anda">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteTestimonial('${t.id}')" class="text-gray-400 hover:text-red-600 p-1.5 rounded-lg text-xs transition" title="Hapus Ulasan Anda">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed text-justify italic">"${t.message}"</p>
+          </div>
+        `;
+      });
+    }
+
+    // --- STREAMING_CHUNK: Managing Admin Dashboard moderation logic ---
+    // Populating moderation tab in admin panel
+    function populateAdminTestimonials() {
+      const container = document.getElementById("adminTestimonialsList");
+      container.innerHTML = "";
+
+      if(appData.testimonials.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Tidak ada ulasan masuk.</p>`;
+        return;
+      }
+
+      appData.testimonials.forEach(t => {
+        container.innerHTML += `
+          <div class="p-3 bg-white border rounded-xl flex justify-between items-center text-xs shadow-sm">
+            <div class="truncate max-w-[80%]">
+              <span class="font-bold text-sunda-950">${t.name}</span>
+              <span class="text-amber-500 font-semibold ml-2">(${t.rating} ★)</span>
+              <p class="text-gray-500 truncate mt-0.5">${t.message}</p>
+            </div>
+            <div class="flex space-x-1 flex-shrink-0">
+              <button onclick="editTestimonial('${t.id}'); closeAdminPanel();" class="p-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="deleteTestimonial('${t.id}')" class="p-1.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg" title="Hapus">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+
+    // --- STREAMING_CHUNK: Admin Core Actions & Session Logic ---
+    // --- ADMIN SYSTEM & LOGIN LOGIC ---
+    function toggleAdminView() {
+      if (appData.isAdmin) {
+        openAdminPanel('banner');
+      } else {
+        openLoginModal();
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById("loginModal").classList.remove("hidden");
+      document.getElementById("adminPassword").focus();
+    }
+
+    function closeLoginModal() {
+      document.getElementById("loginModal").classList.add("hidden");
+      document.getElementById("loginError").classList.add("hidden");
+      document.getElementById("adminPassword").value = "";
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById("adminPassword").value;
+      // Realistic, simple local lock mechanism. Safe from default backend exploits.
+      if (pass === "RaosNgepros12") {
+        appData.isAdmin = true;
+        saveToLocalStorage();
+        closeLoginModal();
+        showToast("Akses Admin Terbuka!", "success");
+        renderPage();
+      } else {
+        document.getElementById("loginError").classList.remove("hidden");
+      }
+    }
+
+    function logoutAdmin() {
+      appData.isAdmin = false;
+      saveToLocalStorage();
+      showToast("Berhasil keluar dari mode admin.");
+      renderPage();
+      closeAdminPanel();
+    }
+
+    function updateAdminElementsVisibility() {
+      const adminElems = document.querySelectorAll(".admin-only");
+      const triggerBtn = document.getElementById("adminTriggerBtn");
+      const triggerIcon = document.getElementById("adminTriggerIcon");
+      const statusBar = document.getElementById("adminStatusBar");
+
+      if (appData.isAdmin) {
+        adminElems.forEach(el => el.classList.remove("hidden"));
+        statusBar.classList.remove("hidden");
+        triggerIcon.className = "fas fa-cog text-2xl animate-spin-slow";
+        triggerBtn.className = "w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition transform active:scale-95 duration-200 hover:scale-110 bg-emerald-700 text-white";
+        triggerBtn.title = "Buka Panel Kontrol";
+      } else {
+        adminElems.forEach(el => el.classList.add("hidden"));
+        statusBar.classList.add("hidden");
+        triggerIcon.className = "fas fa-lock text-2xl";
+        triggerBtn.className = "w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition transform active:scale-95 duration-200 hover:scale-110 bg-sunda-850 hover:bg-sunda-700 text-white";
+        triggerBtn.title = "Akses Admin";
+      }
+    }
+
+    // --- STREAMING_CHUNK: Managing Editor Panel Tabs & Navigation ---
+    // --- ADMIN PANEL DRAWER ACTIONS ---
+    let currentActiveTab = "banner";
+
+    function openAdminPanel(tabName = 'banner') {
+      document.getElementById("adminPanel").classList.remove("hidden");
+      document.body.style.overflow = "hidden"; // Disable scroll
+      switchTab(tabName);
+      populateProductTabs();
+      populateAdminTestimonials();
+    }
+
+    function closeAdminPanel() {
+      document.getElementById("adminPanel").classList.add("hidden");
+      document.body.style.overflow = ""; // Enable scroll
+    }
+
+    function switchTab(tabName) {
+      currentActiveTab = tabName;
+      
+      // Hide all editor forms
+      const forms = document.querySelectorAll(".editor-form");
+      forms.forEach(f => f.classList.add("hidden"));
+      document.getElementById("dynamicProductFormContainer").classList.add("hidden");
+
+      // Reset Tab styles
+      const tabs = document.querySelectorAll(".editor-tab");
+      tabs.forEach(t => {
+        t.className = "editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition text-gray-700 hover:bg-sunda-100/50";
+      });
+
+      // Highlight active tab
+      const activeTabEl = document.getElementById(`tab-${tabName}`);
+      if (activeTabEl) {
+        if(tabName === 'export') {
+          activeTabEl.className = "editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition text-emerald-950 bg-emerald-200 border border-emerald-300";
+        } else {
+          activeTabEl.className = "editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition text-sunda-950 bg-sunda-200/80 border border-sunda-300/40";
+        }
+      }
+
+      // Populate input data based on active tab
+      if (tabName === 'banner') {
+        document.getElementById("form-banner").classList.remove("hidden");
+        document.getElementById("editLogoUrl").value = appData.hero.logoUrl;
+        document.getElementById("editLogoScale").value = appData.hero.logoScale;
+        document.getElementById("logoScaleValue").innerText = `${Number(appData.hero.logoScale).toFixed(2)}x`;
+        document.getElementById("editLogoPreview").src = appData.hero.logoUrl;
+
+        document.getElementById("editHeroTitle").value = appData.hero.title;
+        document.getElementById("editHeroSubtitle").value = appData.hero.subtitle;
+        document.getElementById("editHeroTagline").value = appData.hero.tagline;
+        document.getElementById("editHeroBg").value = appData.hero.bgUrl;
+        document.getElementById("editHeroScale").value = appData.hero.bgScale;
+        document.getElementById("bannerScaleValue").innerText = `${Number(appData.hero.bgScale).toFixed(2)}x`;
+        document.getElementById("editHeroDesc").value = appData.hero.desc;
+      } 
+      else if (tabName === 'about') {
+        document.getElementById("form-about").classList.remove("hidden");
+        document.getElementById("editAboutTitle").value = appData.about.title;
+        document.getElementById("editAboutContent").value = appData.about.content;
+      } 
+      else if (tabName === 'socials') {
+        document.getElementById("form-socials").classList.remove("hidden");
+        document.getElementById("editAddress").value = appData.socials.address;
+        document.getElementById("editSocialWA").value = appData.socials.wa;
+        document.getElementById("editSocialIG").value = appData.socials.ig;
+        document.getElementById("editSocialTikTok").value = appData.socials.tiktok;
+        document.getElementById("editSocialFB").value = appData.socials.fb;
+        document.getElementById("editSocialTwitter").value = appData.socials.twitter;
+        document.getElementById("editSocialLinktree").value = appData.socials.linktree;
+      } 
+      else if (tabName === 'testimonials-admin') {
+        document.getElementById("form-testimonials-admin").classList.remove("hidden");
+        populateAdminTestimonials();
+      }
+      else if (tabName === 'export') {
+        document.getElementById("form-export").classList.remove("hidden");
+      }
+    }
+
+    // --- STREAMING_CHUNK: Save Operations for Editor forms ---
+    // --- FORM SAVE OPERATIONS ---
+    function saveHeroChanges() {
+      appData.hero.logoUrl = document.getElementById("editLogoUrl").value.trim();
+      appData.hero.logoScale = parseFloat(document.getElementById("editLogoScale").value);
+      appData.hero.title = document.getElementById("editHeroTitle").value.trim();
+      appData.hero.subtitle = document.getElementById("editHeroSubtitle").value.trim();
+      appData.hero.tagline = document.getElementById("editHeroTagline").value.trim();
+      appData.hero.bgUrl = document.getElementById("editHeroBg").value.trim();
+      appData.hero.bgScale = parseFloat(document.getElementById("editHeroScale").value);
+      appData.hero.desc = document.getElementById("editHeroDesc").value.trim();
+
+      saveToLocalStorage();
+      renderPage();
+      showToast("Perubahan Banner & Foto disimpan!", "success");
+    }
+
+    function saveAboutChanges() {
+      appData.about.title = document.getElementById("editAboutTitle").value.trim();
+      appData.about.content = document.getElementById("editAboutContent").value.trim();
+
+      saveToLocalStorage();
+      renderPage();
+      showToast("Perubahan 'Tentang Kami' disimpan!", "success");
+    }
+
+    function saveSocialChanges() {
+      appData.socials.address = document.getElementById("editAddress").value.trim();
+      appData.socials.wa = document.getElementById("editSocialWA").value.trim().replace(/\D/g, ""); // strip non-numeric
+      appData.socials.ig = document.getElementById("editSocialIG").value.trim();
+      appData.socials.tiktok = document.getElementById("editSocialTikTok").value.trim();
+      appData.socials.fb = document.getElementById("editSocialFB").value.trim();
+      appData.socials.twitter = document.getElementById("editSocialTwitter").value.trim();
+      appData.socials.linktree = document.getElementById("editSocialLinktree").value.trim();
+
+      saveToLocalStorage();
+      renderPage();
+      showToast("Kontak & Media Sosial diperbarui!", "success");
+    }
+
+    // --- STREAMING_CHUNK: Managing Products Creation and Modification ---
+    // --- PRODUCT CRUD OPERATIONS ---
+    function populateProductTabs() {
+      const container = document.getElementById("productTabsContainer");
+      container.innerHTML = "";
+      appData.products.forEach(p => {
+        container.innerHTML += `
+          <button onclick="openProductEdit('${p.id}')" id="tab-p-${p.id}" class="editor-tab w-full text-left px-3 py-2 rounded-xl text-[11px] font-semibold flex items-center justify-between transition text-gray-600 hover:bg-sunda-100/50">
+            <span class="truncate pr-2"><i class="fas fa-cookie mr-1"></i> ${p.name}</span>
+            <i class="fas fa-chevron-right text-[9px] text-gray-400"></i>
+          </button>
+        `;
+      });
+    }
+
+    function openProductEdit(id) {
+      // Hide all core forms
+      const forms = document.querySelectorAll(".editor-form");
+      forms.forEach(f => f.classList.add("hidden"));
+      
+      // Reset Tab Highlight styling
+      const tabs = document.querySelectorAll(".editor-tab");
+      tabs.forEach(t => {
+        t.className = "editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition text-gray-700 hover:bg-sunda-100/50";
+      });
+
+      // Highlight target product tab
+      const productTab = document.getElementById(`tab-p-${id}`);
+      if(productTab) {
+        productTab.className = "editor-tab w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition text-sunda-950 bg-sunda-200/80 border border-sunda-300/40";
+      }
+
+      const p = appData.products.find(item => item.id === id);
+      if(!p) return;
+
+      const container = document.getElementById("dynamicProductFormContainer");
+      container.innerHTML = `
+        <h4 class="font-serif text-lg font-bold text-sunda-950 border-b pb-2 flex justify-between items-center">
+          <span>Edit Varian Produk</span>
+          <button onclick="deleteProduct('${p.id}')" class="text-rose-600 hover:text-rose-500 font-bold text-xs">
+            <i class="fas fa-trash"></i> Hapus Produk
+          </button>
+        </h4>
+        
+        <div class="space-y-4 pt-2">
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Nama Varian Rengginang</label>
+            <input id="editProdName" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" value="${p.name}">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Deskripsi Rasa & Kelebihan</label>
+            <textarea id="editProdDesc" rows="4" class="w-full px-3 py-2 border rounded-xl text-sm leading-relaxed">${p.desc}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Harga / Kemasan</label>
+            <input id="editProdPrice" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" value="${p.price}">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Foto Kemasan (URL)</label>
+            <input id="editProdImage" type="text" class="w-full px-3 py-2 border rounded-xl text-sm" value="${p.imageUrl}">
+            
+            <div class="mt-2 border-2 border-dashed border-sunda-300 hover:border-sunda-500 rounded-2xl p-4 text-center cursor-pointer hover:bg-sunda-50 transition relative group" id="drop-zone-product">
+              <input type="file" id="file-product" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="uploadProductPhoto(this)">
+              <div class="space-y-1 pointer-events-none">
+                <i class="fas fa-camera text-2xl text-sunda-600 group-hover:scale-110 transition duration-200"></i>
+                <p class="text-xs font-semibold text-gray-700">Tarik & taruh foto produk, atau klik untuk memilih</p>
+                <p class="text-[10px] text-gray-400">Gunakan rasio 4:3 agar terlihat cantik dan simetris</p>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="saveProductChanges('${p.id}')" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition">
+            <i class="fas fa-save mr-1"></i> Simpan Perubahan Varian
+          </button>
+        </div>
+      `;
+      container.classList.remove("hidden");
+    }
+
+    function uploadProductPhoto(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById("editProdImage").value = e.target.result;
+          showToast("Foto produk berhasil diunggah secara lokal!");
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function saveProductChanges(id) {
+      const idx = appData.products.findIndex(p => p.id === id);
+      if(idx === -1) return;
+
+      appData.products[idx].name = document.getElementById("editProdName").value.trim();
+      appData.products[idx].desc = document.getElementById("editProdDesc").value.trim();
+      appData.products[idx].price = document.getElementById("editProdPrice").value.trim();
+      appData.products[idx].imageUrl = document.getElementById("editProdImage").value.trim();
+
+      saveToLocalStorage();
+      renderPage();
+      populateProductTabs();
+      showToast("Varian produk berhasil diperbarui!", "success");
+    }
+
+    function addNewProduct() {
+      const newId = 'p-' + Date.now();
+      const newProd = {
+        id: newId,
+        name: "Varian Rasa Baru",
+        desc: "Deskripsi cita rasa varian baru rengginang geulis buatan Nenek Lilis.",
+        price: "Rp 25.000 / bks",
+        imageUrl: ""
+      };
+      appData.products.push(newProd);
+      saveToLocalStorage();
+      renderPage();
+      
+      openAdminPanel('banner');
+      populateProductTabs();
+      openProductEdit(newId);
+      showToast("Varian baru ditambahkan! Silakan disunting.", "success");
+    }
+
+    function deleteProduct(id) {
+      if(confirm("Apakah Anda yakin ingin menghapus varian rasa produk ini secara permanen?")) {
+        appData.products = appData.products.filter(p => p.id !== id);
+        saveToLocalStorage();
+        renderPage();
+        populateProductTabs();
+        
+        document.getElementById("dynamicProductFormContainer").classList.add("hidden");
+        switchTab('banner');
+        showToast("Varian produk telah dihapus.", "success");
+      }
+    }
+
+    // --- STREAMING_CHUNK: Image Upload and Drag Drop processing ---
+    // --- DRAG & DROP MEDIA UPLOAD LOGIC ---
+    function setupDragAndDrop() {
+      const setupZone = (zoneId, fileInputId, targetInputId, previewId = null) => {
+        const zone = document.getElementById(zoneId);
+        const input = document.getElementById(fileInputId);
+        if(!zone || !input) return;
+
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("border-sunda-600", "bg-sunda-100/50");
+        });
+
+        zone.addEventListener("dragleave", () => {
+          zone.classList.remove("border-sunda-600", "bg-sunda-100/50");
+        });
+
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("border-sunda-600", "bg-sunda-100/50");
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            input.files = e.dataTransfer.files;
+            handleFileConversion(input.files[0], targetInputId, previewId);
+          }
+        });
+
+        input.addEventListener("change", () => {
+          if (input.files && input.files[0]) {
+            handleFileConversion(input.files[0], targetInputId, previewId);
+          }
+        });
+      };
+
+      setupZone("drop-zone-logo", "file-logo", "editLogoUrl", "editLogoPreview");
+      setupZone("drop-zone-banner", "file-banner", "editHeroBg");
+    }
+
+    function handleFileConversion(file, targetInputId, previewId) {
+      if (!file.type.startsWith("image/")) {
+        showToast("File harus berupa gambar!", "error");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(targetInputId).value = e.target.result;
+        if(previewId) {
+          document.getElementById(previewId).src = e.target.result;
+        }
+        showToast("Gambar berhasil dimuat secara lokal!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- STREAMING_CHUNK: Toast Notifications UI controller ---
+    // --- NOTIFICATION UTILITY ---
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toastNotification");
+      const text = document.getElementById("toastMessage");
+      const container = document.getElementById("toastIconContainer");
+      const icon = document.getElementById("toastIcon");
+
+      text.innerText = message;
+      if (type === "success") {
+        container.className = "p-2 rounded-full bg-emerald-100 text-emerald-600";
+        icon.className = "fas fa-check-circle text-lg";
+      } else {
+        container.className = "p-2 rounded-full bg-rose-100 text-rose-600";
+        icon.className = "fas fa-exclamation-circle text-lg";
+      }
+
+      toast.classList.remove("translate-y-[-150%]");
+      setTimeout(() => {
+        toast.classList.add("translate-y-[-150%]");
+      }, 3500);
+    }
+
+    // --- STREAMING_CHUNK: Implementation of Export Website & baked-in updates ---
+    // --- SINKRONISASI EKSPOR DAN UNDUH FILE WEBPAGE ---
+    function downloadWebsiteFile() {
+      // Fetch the source of current index.html
+      let htmlContent = document.documentElement.outerHTML;
+
+      // Inject the current appData state directly into script so it is baked-in as default state
+      // This is a highly advanced state embedding operation
+      const dataStr = JSON.stringify(appData, null, 2);
+      const stateRegex = /let\s+appData\s*=\s*\{[\s\S]*?\};/;
+      
+      const newAppDataBlock = `let appData = ${dataStr};`;
+      htmlContent = htmlContent.replace(stateRegex, newAppDataBlock);
+
+      // Create blob and download
+      const blob = new Blob(["<!DOCTYPE html>\n" + htmlContent], { type: "text/html;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "index.html";
+      link.click();
+      showToast("Berhasil mengekspor index.html dengan data terbaru!", "success");
+    }
+
+    // --- INITIALIZATION ON WINDOW LOAD ---
+    window.onload = function () {
+      initDatabase();
+      renderPage();
+      setupDragAndDrop();
+
+      document.getElementById("currentYear").innerText = new Date().getFullYear();
+
+      // Listeners for zoom range sliders
+      document.getElementById("editLogoScale").addEventListener("input", (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById("logoScaleValue").innerText = `${val.toFixed(2)}x`;
+        document.getElementById("editLogoPreview").style.transform = `scale(${val})`;
+      });
+
+      document.getElementById("editHeroScale").addEventListener("input", (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById("bannerScaleValue").innerText = `${val.toFixed(2)}x`;
+      });
+    };
+  </script>
+</body>
+</html>
